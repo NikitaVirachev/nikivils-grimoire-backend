@@ -1,5 +1,6 @@
 import path from 'path';
 import express from 'express';
+import globalErrorHandler from './controllers/errorController';
 
 const app = express();
 
@@ -15,5 +16,7 @@ app.use(express.static(frontendDir));
 app.get('/', (req, res) => {
   res.sendFile(path.join(frontendDir, 'index.html'));
 });
+
+app.use(globalErrorHandler);
 
 export default app;
