@@ -6,8 +6,8 @@
   "scripts": {
     "start:dev": "nodemon server.ts",
     "start:prod": "cross-env NODE_ENV=production nodemon server.ts",
-    "debug:dev": "ndb server.ts",
-    "debug:prod": "cross-env NODE_ENV=production ndb server.ts"
+    "debug:dev": "ndb -r ts-node/register/transpile-only server.ts",
+    "debug:prod": "cross-env NODE_ENV=production ndb -r ts-node/register/transpile-only server.ts"
   },
   "repository": {
     "type": "git",
