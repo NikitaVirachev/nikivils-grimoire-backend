@@ -37,7 +37,7 @@ const globalErrorHandler = (err: AppError, req: Request, res: Response, next: Ne
   if (process.env.NODE_ENV === 'development') {
     sendErrorDev(err, res);
   } else if (process.env.NODE_ENV === 'production') {
-    let error = { ...err };
+    const error = { ...err };
 
     sendErrorProd(error, res);
   }
