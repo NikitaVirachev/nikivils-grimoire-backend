@@ -3,6 +3,8 @@ import { randomUUID } from 'node:crypto';
 
 const { Schema, model } = mongoose;
 
+const BLOCK_TYPES = ['paragraph', 'heading', 'image', 'quote'];
+
 const blockSchema = new Schema(
   {
     id: {
