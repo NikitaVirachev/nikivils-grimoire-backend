@@ -1,19 +1,11 @@
 import express from 'express';
-import multer from 'multer';
 
 import * as mediaController from '../controllers/mediaController';
+import uploadMedia from '../middleware/mediaUploadMiddleware';
 
 const router = express.Router();
 
-const upload = multer({
-  storage: multer.memoryStorage(),
-
-  limits: {
-    fileSize: 10 * 1024 * 1024,
-  },
-});
-
-router.route('/').post(upload.single('file'), mediaController.createMedia);
+router.route('/').post(uploadMedia.single('file'), mediaController.createMedia);
 
 router.route('/:id').get(mediaController.getMedia).delete(mediaController.deleteMedia);
 
