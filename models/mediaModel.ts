@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose, { type InferSchemaType } from 'mongoose';
 
 const { Schema, model } = mongoose;
 
@@ -45,6 +45,8 @@ const mediaSchema = new Schema(
   },
   { timestamps: true }
 );
+
+export type Media = InferSchemaType<typeof mediaSchema>;
 
 const Media = model('Media', mediaSchema);
 
