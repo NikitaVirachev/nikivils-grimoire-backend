@@ -22,7 +22,7 @@ const mediaSchema = new Schema(
       trim: true,
     },
 
-    mineType: {
+    mimeType: {
       type: String,
       required: true,
     },
