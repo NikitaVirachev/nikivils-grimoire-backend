@@ -1,6 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
 
-import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 
 import { getMediaService } from '../container';
@@ -20,8 +19,10 @@ export const createMedia = async (req: Request, res: Response, next: NextFunctio
 
     const media = await mediaService.create({
       filename: req.file.originalname,
-      mimeType: req.file.mimetype,
-      stream: Readable.from(req.file.buffer),
+
+      claimedMimeType: req.file.mimetype,
+
+      buffer: req.file.buffer,
     });
 
     res.status(201).json({

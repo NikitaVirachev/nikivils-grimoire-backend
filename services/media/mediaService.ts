@@ -1,15 +1,16 @@
 // services/media/media.service.ts
 
-import type { Readable } from 'node:stream';
+import { Readable } from 'node:stream';
 import { Types } from 'mongoose';
 
 import Media from '../../models/mediaModel';
 import type { MediaStorageService } from './mediaStorageService';
+import validateImageasync from './validateImage';
 
 export interface CreateMediaInput {
   filename: string;
-  mimeType: string;
-  stream: Readable;
+  claimedMimeType: string;
+  buffer: Buffer;
 
   width?: number;
   height?: number;
@@ -23,12 +24,15 @@ export class MediaService {
   }
 
   async create(input: CreateMediaInput) {
+    const validated = await validateImageasync(input.buffer);
+
     const storedFile = await this.storage.upload({
       filename: input.filename,
-      stream: input.stream,
+
+      stream: Readable.from(input.buffer),
 
       metadata: {
-        mimeType: input.mimeType,
+        mimeType: validated.mimeType,
       },
     });
 
@@ -40,7 +44,7 @@ export class MediaService {
 
         filename: input.filename,
 
-        mimeType: input.mimeType,
+        mimeType: validated.mimeType,
 
         size: storedFile.size,
 
