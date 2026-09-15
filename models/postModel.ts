@@ -1,9 +1,11 @@
 import mongoose from 'mongoose';
 import { randomUUID } from 'node:crypto';
 
+import { PostBlock } from '../types/postModel.types';
+
 const { Schema, model } = mongoose;
 
-const BLOCK_TYPES = ['paragraph', 'heading', 'image', 'quote'];
+const BLOCK_TYPES = ['paragraph', 'heading', 'image', 'quote'] as const;
 
 const blockSchema = new Schema(
   {
@@ -188,7 +190,7 @@ const postSchema = new Schema(
 postSchema.index({ status: 1, publishedAt: -1 });
 
 postSchema.path('content.blocks').validate({
-  validator(blocks) {
+  validator(blocks: PostBlock[]) {
     return blocks.every((block) => BLOCK_TYPES.includes(block.type));
   },
 
