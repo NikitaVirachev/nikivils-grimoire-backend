@@ -5,6 +5,7 @@ import globalErrorHandler from './controllers/errorController';
 import AppError from './utils/appError';
 
 import postRouter from './routes/postRoutes';
+import mediaRouter from './routes/mediaRoutes';
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.get('/', (req, res) => {
 
 // 3) ROUTES
 app.use('/api/v1/posts', postRouter);
+app.use('/api/v1/media', mediaRouter);
 
 app.use((req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
