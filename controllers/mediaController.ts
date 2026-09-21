@@ -20,20 +20,24 @@ export const createMedia = async (req: Request, res: Response, next: NextFunctio
     const media = await mediaService.create({
       filename: req.file.originalname,
 
-      claimedMimeType: req.file.mimetype,
-
       buffer: req.file.buffer,
     });
 
     res.status(201).json({
       status: 'success',
+
       data: {
         media: {
           id: media._id,
+
           filename: media.filename,
+
           mimeType: media.mimeType,
+
           size: media.size,
+
           width: media.width,
+
           height: media.height,
         },
       },

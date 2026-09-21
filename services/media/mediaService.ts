@@ -9,11 +9,7 @@ import validateImageasync from './validateImage';
 
 export interface CreateMediaInput {
   filename: string;
-  claimedMimeType: string;
   buffer: Buffer;
-
-  width?: number;
-  height?: number;
 }
 
 export class MediaService {
@@ -33,6 +29,10 @@ export class MediaService {
 
       metadata: {
         mimeType: validated.mimeType,
+
+        width: validated.width,
+
+        height: validated.height,
       },
     });
 
@@ -48,9 +48,9 @@ export class MediaService {
 
         size: storedFile.size,
 
-        width: input.width,
+        width: validated.width,
 
-        height: input.height,
+        height: validated.height,
       });
 
       return media;
