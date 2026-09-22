@@ -59,7 +59,7 @@ const validateImageasync = async (buffer: Buffer): Promise<ValidatedImage> => {
    * do not contradict each other.
    */
   if (metadata.mediaType && metadata.mediaType !== detectedType.mime) {
-    throw new Error('Image type does not match its contents');
+    throw new AppError('Image type does not match its contents', 422);
   }
 
   /*
