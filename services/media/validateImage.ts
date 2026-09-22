@@ -1,5 +1,7 @@
 import sharp from 'sharp';
 
+import AppError from '../../utils/appError';
+
 const ALLOWED_IMAGE_TYPES = new Set([
   'image/jpeg',
   'image/png',
@@ -22,11 +24,11 @@ const validateImageasync = async (buffer: Buffer): Promise<ValidatedImage> => {
   const detectedType = await fileTypeFromBuffer(buffer);
 
   if (!detectedType) {
-    throw new Error('Unable to determine file type');
+    throw new AppError('Unsupported file type', 415);
   }
 
   if (!ALLOWED_IMAGE_TYPES.has(detectedType.mime)) {
-    throw new Error(`Unsupported image type: ${detectedType.mime}`);
+    throw new AppError(`Unsupported image type: ${detectedType.mime}`, 415);
   }
 
   const metadata = await sharp(buffer, {
