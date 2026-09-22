@@ -1,5 +1,3 @@
-// services/media/media.service.ts
-
 import { Readable } from 'node:stream';
 import { Types } from 'mongoose';
 
