@@ -29,23 +29,17 @@ const validateImageasync = async (buffer: Buffer): Promise<ValidatedImage> => {
     throw new Error(`Unsupported image type: ${detectedType.mime}`);
   }
 
-  let metadata: sharp.Metadata;
+  const metadata = await sharp(buffer, {
+    /*
+     * Do not allow the image size to increase after unpacking.
+     */
+    limitInputPixels: Number(process.env.MAX_IMAGE_PIXELS),
 
-  try {
-    metadata = await sharp(buffer, {
-      /*
-       * Do not allow the image size to increase after unpacking.
-       */
-      limitInputPixels: Number(process.env.MAX_IMAGE_PIXELS),
-
-      /*
-       * We retain strict warning handling for untrusted files.
-       */
-      failOn: 'warning',
-    }).metadata();
-  } catch {
-    throw new Error('Invalid or corrupted image');
-  }
+    /*
+     * We retain strict warning handling for untrusted files.
+     */
+    failOn: 'warning',
+  }).metadata();
 
   if (!metadata.width || !metadata.height) {
     throw new Error('Unable to determine image dimensions');
