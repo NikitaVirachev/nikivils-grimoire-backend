@@ -84,7 +84,7 @@ export class MediaService {
     }
 
     if (media.storage !== this.storage.type) {
-      throw new Error(`Storage "${media.storage}" is not configured`);
+      throw new AppError(`Storage "${media.storage}" is not configured`, 500);
     }
 
     const stream = this.storage.createReadStream(media.storageKey);
@@ -103,7 +103,7 @@ export class MediaService {
     }
 
     if (media.storage !== this.storage.type) {
-      throw new Error(`Storage "${media.storage}" is not configured`);
+      throw new AppError(`Storage "${media.storage}" is not configured`, 500);
     }
 
     await this.storage.delete(media.storageKey);
