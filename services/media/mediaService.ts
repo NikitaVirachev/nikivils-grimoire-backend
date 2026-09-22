@@ -80,7 +80,7 @@ export class MediaService {
     const media = await this.get(mediaId);
 
     if (!media) {
-      return null;
+      throw new AppError('Media not found', 404);
     }
 
     if (media.storage !== this.storage.type) {
