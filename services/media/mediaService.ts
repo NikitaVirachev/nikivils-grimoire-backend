@@ -4,6 +4,7 @@ import { Types } from 'mongoose';
 import Media from '../../models/mediaModel';
 import type { MediaStorageService } from './mediaStorageService';
 import validateImageasync from './validateImage';
+import AppError from '../../utils/appError';
 
 export interface CreateMediaInput {
   filename: string;
@@ -69,7 +70,7 @@ export class MediaService {
 
   async get(mediaId: string) {
     if (!Types.ObjectId.isValid(mediaId)) {
-      return null;
+      throw new AppError('Invalid media ID', 400);
     }
 
     return Media.findById(mediaId);
