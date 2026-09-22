@@ -8,9 +8,6 @@ const ALLOWED_IMAGE_TYPES = new Set([
   'image/avif',
 ]);
 
-// Max 40 megapixels
-const MAX_IMAGE_PIXELS = 40_000_000;
-
 export interface ValidatedImage {
   mimeType: string;
   extension: string;
@@ -39,7 +36,7 @@ const validateImageasync = async (buffer: Buffer): Promise<ValidatedImage> => {
       /*
        * Do not allow the image size to increase after unpacking.
        */
-      limitInputPixels: MAX_IMAGE_PIXELS,
+      limitInputPixels: Number(process.env.MAX_IMAGE_PIXELS),
 
       /*
        * We retain strict warning handling for untrusted files.
