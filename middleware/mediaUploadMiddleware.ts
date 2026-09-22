@@ -1,7 +1,5 @@
 import multer from 'multer';
 
-const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
-
 const ALLOWED_MIME_TYPES = new Set([
   'image/jpeg',
   'image/png',
@@ -14,7 +12,7 @@ const uploadMedia = multer({
   storage: multer.memoryStorage(),
 
   limits: {
-    fileSize: MAX_IMAGE_SIZE,
+    fileSize: Number(process.env.MAX_IMAGE_SIZE),
     files: 1,
   },
 
