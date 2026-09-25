@@ -29,3 +29,39 @@ interface QuoteBlock extends BaseBlock {
 }
 
 export type PostBlock = ParagraphBlock | HeadingBlock | ImageBlock | QuoteBlock;
+
+export interface CoverInput {
+  imageId: string | mongoose.Types.ObjectId;
+  alt?: string;
+}
+
+export interface PostContent {
+  version: number;
+  blocks: PostBlock[];
+}
+
+export interface CreatePostInput {
+  title: string;
+  overview: string;
+
+  cover?: CoverInput | null;
+
+  content?: PostContent;
+
+  tags?: string[];
+
+  status?: 'draft' | 'published';
+}
+
+export interface UpdatePostInput {
+  title?: string;
+  overview?: string;
+
+  cover?: CoverInput | null;
+
+  content?: PostContent;
+
+  tags?: string[];
+
+  status?: 'draft' | 'published';
+}
