@@ -1,11 +1,10 @@
-// services/media/media.service.ts
-
 import { Readable } from 'node:stream';
 import { Types } from 'mongoose';
 
 import Media from '../../models/mediaModel';
 import type { MediaStorageService } from './mediaStorageService';
 import validateImageasync from './validateImage';
+import AppError from '../../utils/appError';
 
 export interface CreateMediaInput {
   filename: string;
@@ -71,7 +70,7 @@ export class MediaService {
 
   async get(mediaId: string) {
     if (!Types.ObjectId.isValid(mediaId)) {
-      return null;
+      throw new AppError('Invalid media ID', 400);
     }
 
     return Media.findById(mediaId);
@@ -81,11 +80,11 @@ export class MediaService {
     const media = await this.get(mediaId);
 
     if (!media) {
-      return null;
+      throw new AppError('Media not found', 404);
     }
 
     if (media.storage !== this.storage.type) {
-      throw new Error(`Storage "${media.storage}" is not configured`);
+      throw new AppError(`Storage "${media.storage}" is not configured`, 500);
     }
 
     const stream = this.storage.createReadStream(media.storageKey);
@@ -100,11 +99,11 @@ export class MediaService {
     const media = await this.get(mediaId);
 
     if (!media) {
-      return false;
+      throw new AppError('Media not found', 404);
     }
 
     if (media.storage !== this.storage.type) {
-      throw new Error(`Storage "${media.storage}" is not configured`);
+      throw new AppError(`Storage "${media.storage}" is not configured`, 500);
     }
 
     await this.storage.delete(media.storageKey);

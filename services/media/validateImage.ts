@@ -1,5 +1,7 @@
 import sharp from 'sharp';
 
+import AppError from '../../utils/appError';
+
 const ALLOWED_IMAGE_TYPES = new Set([
   'image/jpeg',
   'image/png',
@@ -7,9 +9,6 @@ const ALLOWED_IMAGE_TYPES = new Set([
   'image/gif',
   'image/avif',
 ]);
-
-// Max 40 megapixels
-const MAX_IMAGE_PIXELS = 40_000_000;
 
 export interface ValidatedImage {
   mimeType: string;
@@ -25,11 +24,11 @@ const validateImageasync = async (buffer: Buffer): Promise<ValidatedImage> => {
   const detectedType = await fileTypeFromBuffer(buffer);
 
   if (!detectedType) {
-    throw new Error('Unable to determine file type');
+    throw new AppError('Unsupported file type', 415);
   }
 
   if (!ALLOWED_IMAGE_TYPES.has(detectedType.mime)) {
-    throw new Error(`Unsupported image type: ${detectedType.mime}`);
+    throw new AppError(`Unsupported image type: ${detectedType.mime}`, 415);
   }
 
   let metadata: sharp.Metadata;
@@ -39,7 +38,7 @@ const validateImageasync = async (buffer: Buffer): Promise<ValidatedImage> => {
       /*
        * Do not allow the image size to increase after unpacking.
        */
-      limitInputPixels: MAX_IMAGE_PIXELS,
+      limitInputPixels: Number(process.env.MAX_IMAGE_PIXELS),
 
       /*
        * We retain strict warning handling for untrusted files.
@@ -47,11 +46,11 @@ const validateImageasync = async (buffer: Buffer): Promise<ValidatedImage> => {
       failOn: 'warning',
     }).metadata();
   } catch {
-    throw new Error('Invalid or corrupted image');
+    throw new AppError('Invalid or corrupted image', 422);
   }
 
   if (!metadata.width || !metadata.height) {
-    throw new Error('Unable to determine image dimensions');
+    throw new AppError('Unable to determine image dimensions', 422);
   }
 
   /*
@@ -60,7 +59,7 @@ const validateImageasync = async (buffer: Buffer): Promise<ValidatedImage> => {
    * do not contradict each other.
    */
   if (metadata.mediaType && metadata.mediaType !== detectedType.mime) {
-    throw new Error('Image type does not match its contents');
+    throw new AppError('Image type does not match its contents', 422);
   }
 
   /*
