@@ -3,49 +3,46 @@ import type { Request, Response, NextFunction } from 'express';
 import { pipeline } from 'node:stream/promises';
 
 import { getMediaService } from '../container';
+import catchAsync from '../utils/catchAsync';
 
-export const createMedia = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    if (!req.file) {
-      res.status(400).json({
-        status: 'fail',
-        message: 'File is required',
-      });
-
-      return;
-    }
-
-    const mediaService = getMediaService();
-
-    const media = await mediaService.create({
-      filename: req.file.originalname,
-
-      buffer: req.file.buffer,
+export const createMedia = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  if (!req.file) {
+    res.status(400).json({
+      status: 'fail',
+      message: 'File is required',
     });
 
-    res.status(201).json({
-      status: 'success',
-
-      data: {
-        media: {
-          id: media._id,
-
-          filename: media.filename,
-
-          mimeType: media.mimeType,
-
-          size: media.size,
-
-          width: media.width,
-
-          height: media.height,
-        },
-      },
-    });
-  } catch (error) {
-    next(error);
+    return;
   }
-};
+
+  const mediaService = getMediaService();
+
+  const media = await mediaService.create({
+    filename: req.file.originalname,
+
+    buffer: req.file.buffer,
+  });
+
+  res.status(201).json({
+    status: 'success',
+
+    data: {
+      media: {
+        id: media._id,
+
+        filename: media.filename,
+
+        mimeType: media.mimeType,
+
+        size: media.size,
+
+        width: media.width,
+
+        height: media.height,
+      },
+    },
+  });
+});
 
 export const getMedia = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -81,23 +78,19 @@ export const getMedia = async (req: Request, res: Response, next: NextFunction) 
   }
 };
 
-export const deleteMedia = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const mediaService = getMediaService();
+export const deleteMedia = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const mediaService = getMediaService();
 
-    const deleted = await mediaService.delete(req.params.id);
+  const deleted = await mediaService.delete(req.params.id);
 
-    if (!deleted) {
-      res.status(404).json({
-        status: 'fail',
-        message: 'Media not found',
-      });
+  if (!deleted) {
+    res.status(404).json({
+      status: 'fail',
+      message: 'Media not found',
+    });
 
-      return;
-    }
-
-    res.status(204).send();
-  } catch (error) {
-    next(error);
+    return;
   }
-};
+
+  res.status(204).send();
+});
