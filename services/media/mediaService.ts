@@ -2,8 +2,10 @@ import { Readable } from 'node:stream';
 import { Types } from 'mongoose';
 
 import Media from '../../models/mediaModel';
+import Post from '../../models/postModel';
 import type { MediaStorageService } from './mediaStorageService';
 import validateImageasync from './validateImage';
+
 import AppError from '../../utils/appError';
 
 export interface CreateMediaInput {
@@ -95,11 +97,21 @@ export class MediaService {
     };
   }
 
-  async delete(mediaId: string): Promise<boolean> {
-    const media = await this.get(mediaId);
+  async delete(mediaId: string): Promise<void> {
+    if (!Types.ObjectId.isValid(mediaId)) {
+      throw new AppError('Invalid media ID', 400);
+    }
+
+    const media = await Media.findById(mediaId);
 
     if (!media) {
       throw new AppError('Media not found', 404);
+    }
+
+    const isUsed = await this.isUsedByPost(media._id);
+
+    if (isUsed) {
+      throw new AppError('Media is currently used by a post', 409);
     }
 
     if (media.storage !== this.storage.type) {
@@ -109,7 +121,20 @@ export class MediaService {
     await this.storage.delete(media.storageKey);
 
     await media.deleteOne();
+  }
 
-    return true;
+  private async isUsedByPost(mediaId: Types.ObjectId): Promise<boolean> {
+    const post = await Post.exists({
+      $or: [
+        {
+          'cover.imageId': mediaId,
+        },
+        {
+          'content.blocks.imageId': mediaId,
+        },
+      ],
+    });
+
+    return post !== null;
   }
 }

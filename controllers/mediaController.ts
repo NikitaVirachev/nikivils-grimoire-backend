@@ -81,16 +81,7 @@ export const getMedia = async (req: Request, res: Response, next: NextFunction) 
 export const deleteMedia = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const mediaService = getMediaService();
 
-  const deleted = await mediaService.delete(req.params.id);
-
-  if (!deleted) {
-    res.status(404).json({
-      status: 'fail',
-      message: 'Media not found',
-    });
-
-    return;
-  }
+  await mediaService.delete(req.params.id);
 
   res.status(204).send();
 });
