@@ -10,11 +10,11 @@ const commentSchema = new Schema(
       required: true,
     },
 
-    author: {
+    authorName: {
       type: String,
       required: true,
       trim: true,
-      maxlength: 100,
+      maxlength: 50,
     },
 
     text: {
