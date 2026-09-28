@@ -85,26 +85,38 @@ const coverSchema = z
   })
   .strict();
 
-export const createPostSchema = z
-  .object({
-    title: z.string().trim().min(1, 'Title is required').max(200),
+const postBaseSchema = z.strictObject({
+  title: z.string().trim().min(1).max(200),
 
-    overview: z.string().trim().min(1, 'Overview is required').max(1000),
+  overview: z.string().trim().min(1).max(1000),
 
-    cover: coverSchema.nullable().optional(),
+  cover: coverSchema.nullable(),
 
-    content: postContentSchema.default({
-      version: 1,
-      blocks: [],
-    }),
+  content: postContentSchema,
 
-    tags: z.array(z.string().trim().min(1).max(100)).max(50).default([]),
+  tags: z.array(z.string().trim().min(1).max(100)),
 
-    status: z.enum(['draft', 'published']).default('draft'),
-  })
-  .strict();
+  status: z.enum(['draft', 'published']),
+});
 
-export const updatePostSchema = createPostSchema
+export const createPostSchema = z.strictObject({
+  title: postBaseSchema.shape.title,
+
+  overview: postBaseSchema.shape.overview,
+
+  cover: postBaseSchema.shape.cover.optional(),
+
+  content: postBaseSchema.shape.content.default({
+    version: 1,
+    blocks: [],
+  }),
+
+  tags: postBaseSchema.shape.tags.default([]),
+
+  status: postBaseSchema.shape.status.default('draft'),
+});
+
+export const updatePostSchema = postBaseSchema
   .partial()
   .refine((value) => Object.keys(value).length > 0, {
     message: 'At least one field must be provided',
