@@ -1,0 +1,140 @@
+import { Readable } from 'node:stream';
+import { Types } from 'mongoose';
+
+import Media from '../../models/mediaModel';
+import Post from '../../models/postModel';
+import type { MediaStorageService } from './mediaStorageService';
+import validateImageasync from './validateImage';
+
+import AppError from '../../utils/appError';
+
+export interface CreateMediaInput {
+  filename: string;
+  buffer: Buffer;
+}
+
+export class MediaService {
+  private readonly storage: MediaStorageService;
+
+  constructor(storage: MediaStorageService) {
+    this.storage = storage;
+  }
+
+  async create(input: CreateMediaInput) {
+    const validated = await validateImageasync(input.buffer);
+
+    const storedFile = await this.storage.upload({
+      filename: input.filename,
+
+      stream: Readable.from(input.buffer),
+
+      metadata: {
+        mimeType: validated.mimeType,
+
+        width: validated.width,
+
+        height: validated.height,
+      },
+    });
+
+    try {
+      const media = await Media.create({
+        storage: this.storage.type,
+
+        storageKey: storedFile.storageKey,
+
+        filename: input.filename,
+
+        mimeType: validated.mimeType,
+
+        size: storedFile.size,
+
+        width: validated.width,
+
+        height: validated.height,
+      });
+
+      return media;
+    } catch (error) {
+      // GridFS-файл уже был создан,
+      // но Media создать не удалось.
+      //
+      // Компенсируем операцию.
+      try {
+        await this.storage.delete(storedFile.storageKey);
+      } catch {
+        // logger.error(...)
+      }
+
+      throw error;
+    }
+  }
+
+  async get(mediaId: string) {
+    if (!Types.ObjectId.isValid(mediaId)) {
+      throw new AppError('Invalid media ID', 400);
+    }
+
+    return Media.findById(mediaId);
+  }
+
+  async getFile(mediaId: string) {
+    const media = await this.get(mediaId);
+
+    if (!media) {
+      throw new AppError('Media not found', 404);
+    }
+
+    if (media.storage !== this.storage.type) {
+      throw new AppError(`Storage "${media.storage}" is not configured`, 500);
+    }
+
+    const stream = this.storage.createReadStream(media.storageKey);
+
+    return {
+      media,
+      stream,
+    };
+  }
+
+  async delete(mediaId: string): Promise<void> {
+    if (!Types.ObjectId.isValid(mediaId)) {
+      throw new AppError('Invalid media ID', 400);
+    }
+
+    const media = await Media.findById(mediaId);
+
+    if (!media) {
+      throw new AppError('Media not found', 404);
+    }
+
+    const isUsed = await this.isUsedByPost(media._id);
+
+    if (isUsed) {
+      throw new AppError('Media is currently used by a post', 409);
+    }
+
+    if (media.storage !== this.storage.type) {
+      throw new AppError(`Storage "${media.storage}" is not configured`, 500);
+    }
+
+    await this.storage.delete(media.storageKey);
+
+    await media.deleteOne();
+  }
+
+  private async isUsedByPost(mediaId: Types.ObjectId): Promise<boolean> {
+    const post = await Post.exists({
+      $or: [
+        {
+          'cover.imageId': mediaId,
+        },
+        {
+          'content.blocks.imageId': mediaId,
+        },
+      ],
+    });
+
+    return post !== null;
+  }
+}
