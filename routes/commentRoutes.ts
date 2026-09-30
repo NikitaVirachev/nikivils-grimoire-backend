@@ -1,10 +1,9 @@
 import express from 'express';
+import { createCommentSchema } from '@nikivils/grimoire-contracts';
 
 import * as commentController from '../controllers/commentController';
 
 import validateBody from '../middleware/validateBody';
-
-import { createCommentSchema } from '../validators/commentValidator';
 
 const router = express.Router({
   mergeParams: true,
