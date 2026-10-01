@@ -1,12 +1,11 @@
 import mongoose from 'mongoose';
+import type { CreatePostRequest, UpdatePostRequest } from '@nikivils/grimoire-contracts';
 
 import Post from '../../models/postModel';
 import Media from '../../models/mediaModel';
 import Comment from '../../models/commentModel';
 
 import AppError from '../../utils/appError';
-
-import type { CreatePostInput, UpdatePostInput } from '../../types/postModel.types';
 
 const { Types } = mongoose;
 
@@ -59,7 +58,7 @@ const assertMediaExist = async (ids: string[]): Promise<void> => {
 };
 
 class PostService {
-  async create(input: CreatePostInput) {
+  async create(input: CreatePostRequest) {
     const mediaIds = collectMediaIds(input.cover, input.content);
 
     await assertMediaExist(mediaIds);
@@ -113,7 +112,7 @@ class PostService {
       });
   }
 
-  async update(id: string, input: UpdatePostInput) {
+  async update(id: string, input: UpdatePostRequest) {
     const post = await this.getById(id);
 
     const wasPublished = post.status === 'published';
