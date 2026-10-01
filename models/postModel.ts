@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { randomUUID } from 'node:crypto';
 
-import { PostBlock } from '../types/postModel.types';
+import { PostBlock } from '@nikivils/grimoire-contracts';
 
 const { Schema, model } = mongoose;
 
