@@ -1,12 +1,11 @@
 import { Types } from 'mongoose';
+import { CreateCommentRequest } from '@nikivils/grimoire-contracts';
 
 import Comment from '../../models/commentModel';
 import Post from '../../models/postModel';
 
 import AppError from '../../utils/appError';
 import { generateAnonymousName } from '../../utils/generateAnonymousName';
-
-import type { CreateCommentInput } from '../../validators/commentValidator';
 
 class CommentService {
   private async assertPostExists(postId: string): Promise<Types.ObjectId> {
@@ -28,7 +27,7 @@ class CommentService {
     return objectId;
   }
 
-  async create(postId: string, input: CreateCommentInput) {
+  async create(postId: string, input: CreateCommentRequest) {
     const postObjectId = await this.assertPostExists(postId);
 
     const authorName = input.authorName ?? generateAnonymousName();
