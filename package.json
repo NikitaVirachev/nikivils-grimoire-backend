@@ -42,7 +42,7 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@nikivils/grimoire-contracts": "file:../nikivils-grimoire-contracts/nikivils-grimoire-contracts-0.1.0.tgz",
+    "@nikivils/grimoire-contracts": "^0.1.0",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "file-type": "^22.1.0",
