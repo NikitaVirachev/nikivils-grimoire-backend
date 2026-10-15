@@ -1,7 +1,7 @@
 import express from 'express';
 import { createCommentSchema } from '@nikivils/grimoire-contracts';
 
-import * as commentController from '../../../../controllers/commentController';
+import * as commentController from './commentController';
 
 import validateBody from '../../../../middleware/validateBody';
 
