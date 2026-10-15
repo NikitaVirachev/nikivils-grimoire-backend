@@ -10,7 +10,7 @@ import {
 
 const { GridFSBucket, ObjectId } = mongoose.mongo;
 
-class GridFsMediaStorageService implements MediaStorage {
+class GridfsMediaStorage implements MediaStorage {
   readonly type = 'gridfs' as const;
 
   private readonly bucket: mongoose.mongo.GridFSBucket;
@@ -50,4 +50,4 @@ class GridFsMediaStorageService implements MediaStorage {
   }
 }
 
-export default GridFsMediaStorageService;
+export default GridfsMediaStorage;
