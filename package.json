@@ -4,8 +4,8 @@
   "description": "A backend part of my personal website.",
   "main": "server.ts",
   "scripts": {
-    "start:dev": "nodemon server.ts",
-    "start:prod": "cross-env NODE_ENV=production nodemon server.ts",
+    "start:dev": "nodemon --exec \"node -r ts-node/register -r tsconfig-paths/register\" server.ts",
+    "start:prod": "cross-env NODE_ENV=production node -r ts-node/register -r tsconfig-paths/register server.ts",
     "debug:dev": "ndb -r ts-node/register/transpile-only server.ts",
     "debug:prod": "cross-env NODE_ENV=production ndb -r ts-node/register/transpile-only server.ts"
   },
