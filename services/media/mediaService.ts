@@ -1,8 +1,8 @@
 import { Readable } from 'node:stream';
 import { Types } from 'mongoose';
 
+import { PostModel } from '@/modules/post';
 import Media from '../../models/mediaModel';
-import Post from '../../models/postModel';
 import type { MediaStorageService } from './mediaStorageService';
 import validateImageasync from './validateImage';
 
@@ -124,7 +124,7 @@ export class MediaService {
   }
 
   private async isUsedByPost(mediaId: Types.ObjectId): Promise<boolean> {
-    const post = await Post.exists({
+    const post = await PostModel.exists({
       $or: [
         {
           'cover.imageId': mediaId,

@@ -1,8 +1,8 @@
 import { Types } from 'mongoose';
 import { CreateCommentRequest } from '@nikivils/grimoire-contracts';
 
+import { PostModel } from '@/modules/post';
 import Comment from '../../models/commentModel';
-import Post from '../../models/postModel';
 
 import AppError from '../../utils/appError';
 import { generateAnonymousName } from '../../utils/generateAnonymousName';
@@ -15,7 +15,7 @@ class CommentService {
 
     const objectId = new Types.ObjectId(postId);
 
-    const postExists = await Post.exists({
+    const postExists = await PostModel.exists({
       _id: objectId,
       status: 'published',
     });

@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import type { CreatePostRequest, UpdatePostRequest } from '@nikivils/grimoire-contracts';
 
-import Post from '../../../../models/postModel';
+import Post from '../infrastructure/post.model';
 import Media from '../../../../models/mediaModel';
 import Comment from '../../../../models/commentModel';
 
