@@ -2,11 +2,15 @@ import mongoose from 'mongoose';
 import { pipeline } from 'node:stream/promises';
 import type { Readable } from 'node:stream';
 
-import { MediaStorageService, UploadFileInput, StoredFile } from './mediaStorageService';
+import {
+  MediaStorage,
+  UploadFileInput,
+  StoredFile,
+} from '@/modules/media/application/ports/mediaStorage';
 
 const { GridFSBucket, ObjectId } = mongoose.mongo;
 
-class GridFsMediaStorageService implements MediaStorageService {
+class GridFsMediaStorageService implements MediaStorage {
   readonly type = 'gridfs' as const;
 
   private readonly bucket: mongoose.mongo.GridFSBucket;

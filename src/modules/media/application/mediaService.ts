@@ -3,7 +3,7 @@ import { Types } from 'mongoose';
 
 import { PostModel } from '@/modules/post';
 import { mediaModel as Media } from '@/modules/media';
-import type { MediaStorageService } from '../../../../services/media/mediaStorageService';
+import type { MediaStorage } from './ports/mediaStorage';
 import validateImageasync from '../../../../services/media/validateImage';
 
 import AppError from '../../../../utils/appError';
@@ -14,9 +14,9 @@ export interface CreateMediaInput {
 }
 
 export class MediaService {
-  private readonly storage: MediaStorageService;
+  private readonly storage: MediaStorage;
 
-  constructor(storage: MediaStorageService) {
+  constructor(storage: MediaStorage) {
     this.storage = storage;
   }
 

@@ -14,7 +14,7 @@ export interface StoredFile {
   size: number;
 }
 
-export interface MediaStorageService {
+export interface MediaStorage {
   readonly type: MediaStorageType;
 
   upload(input: UploadFileInput): Promise<StoredFile>;
