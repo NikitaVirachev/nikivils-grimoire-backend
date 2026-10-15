@@ -1,9 +1,9 @@
 import { Readable } from 'node:stream';
 import { Types } from 'mongoose';
 
-import { PostModel } from '@/modules/post';
 import { mediaModel as Media } from '@/modules/media';
 import type { MediaStorage } from './ports/mediaStorage.port';
+import type { IsMediaUsed } from './ports/mediaUsage.port';
 import validateImageasync from '../infrastructure/image/validateImage';
 
 import AppError from '../../../../utils/appError';
@@ -16,8 +16,11 @@ export interface CreateMediaInput {
 export class MediaService {
   private readonly storage: MediaStorage;
 
-  constructor(storage: MediaStorage) {
+  private readonly isMediaUsed: IsMediaUsed;
+
+  constructor(storage: MediaStorage, isMediaUsed: IsMediaUsed) {
     this.storage = storage;
+    this.isMediaUsed = isMediaUsed;
   }
 
   async create(input: CreateMediaInput) {
@@ -108,7 +111,7 @@ export class MediaService {
       throw new AppError('Media not found', 404);
     }
 
-    const isUsed = await this.isUsedByPost(media._id);
+    const isUsed = await this.isMediaUsed(mediaId);
 
     if (isUsed) {
       throw new AppError('Media is currently used by a post', 409);
@@ -121,20 +124,5 @@ export class MediaService {
     await this.storage.delete(media.storageKey);
 
     await media.deleteOne();
-  }
-
-  private async isUsedByPost(mediaId: Types.ObjectId): Promise<boolean> {
-    const post = await PostModel.exists({
-      $or: [
-        {
-          'cover.imageId': mediaId,
-        },
-        {
-          'content.blocks.imageId': mediaId,
-        },
-      ],
-    });
-
-    return post !== null;
   }
 }

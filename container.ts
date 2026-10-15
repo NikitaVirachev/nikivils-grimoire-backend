@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
 import { GridfsMediaStorage, MediaService } from '@/modules/media';
+import { isMediaUsed } from '@/modules/post';
 
 let mediaService: MediaService;
 
@@ -13,7 +14,7 @@ export function initializeServices() {
 
   const mediaStorage = new GridfsMediaStorage(db);
 
-  mediaService = new MediaService(mediaStorage);
+  mediaService = new MediaService(mediaStorage, isMediaUsed);
 }
 
 export function getMediaService() {

@@ -57,6 +57,14 @@ const assertMediaExist = async (ids: string[]): Promise<void> => {
   }
 };
 
+export const isMediaUsed = async (mediaId: string): Promise<boolean> => {
+  const post = await Post.exists({
+    $or: [{ 'cover.imageId': mediaId }, { 'content.blocks.imageId': mediaId }],
+  });
+
+  return post !== null;
+};
+
 class PostService {
   async create(input: CreatePostRequest) {
     const mediaIds = collectMediaIds(input.cover, input.content);
