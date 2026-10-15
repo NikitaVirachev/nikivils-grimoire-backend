@@ -1,6 +1,6 @@
 import sharp from 'sharp';
 
-import AppError from '../../utils/appError';
+import AppError from '../../../../../utils/appError';
 
 const ALLOWED_IMAGE_TYPES = new Set([
   'image/jpeg',
