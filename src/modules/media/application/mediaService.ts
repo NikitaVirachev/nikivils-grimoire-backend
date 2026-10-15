@@ -3,10 +3,10 @@ import { Types } from 'mongoose';
 
 import { PostModel } from '@/modules/post';
 import { mediaModel as Media } from '@/modules/media';
-import type { MediaStorageService } from './mediaStorageService';
-import validateImageasync from './validateImage';
+import type { MediaStorageService } from '../../../../services/media/mediaStorageService';
+import validateImageasync from '../../../../services/media/validateImage';
 
-import AppError from '../../utils/appError';
+import AppError from '../../../../utils/appError';
 
 export interface CreateMediaInput {
   filename: string;
