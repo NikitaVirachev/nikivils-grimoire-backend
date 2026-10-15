@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
 
-import CommentService from '../services/comment/commentService';
+import { CommentService } from '@/modules/comment';
 
 const commentService = new CommentService();
 
