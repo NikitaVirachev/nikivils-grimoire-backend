@@ -6,7 +6,7 @@ import {
   MediaStorage,
   UploadFileInput,
   StoredFile,
-} from '@/modules/media/application/ports/mediaStorage';
+} from '@/modules/media/application/ports/mediaStorage.port';
 
 const { GridFSBucket, ObjectId } = mongoose.mongo;
 

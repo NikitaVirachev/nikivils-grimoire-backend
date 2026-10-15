@@ -3,7 +3,7 @@ import { Types } from 'mongoose';
 
 import { PostModel } from '@/modules/post';
 import { mediaModel as Media } from '@/modules/media';
-import type { MediaStorage } from './ports/mediaStorage';
+import type { MediaStorage } from './ports/mediaStorage.port';
 import validateImageasync from '../infrastructure/image/validateImage';
 
 import AppError from '../../../../utils/appError';
