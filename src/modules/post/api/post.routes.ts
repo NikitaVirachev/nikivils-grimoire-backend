@@ -1,7 +1,7 @@
 import express from 'express';
 import { createPostSchema, updatePostSchema } from '@nikivils/grimoire-contracts';
 
-import * as postController from '../../../../controllers/postController';
+import * as postController from './post.controller';
 import validateBody from '../../../../middleware/validateBody';
 import commentRouter from '../../../../routes/commentRoutes';
 

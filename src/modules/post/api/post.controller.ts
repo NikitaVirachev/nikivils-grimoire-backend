@@ -1,5 +1,5 @@
 import PostService from '@/modules/post';
-import catchAsync from '../utils/catchAsync';
+import catchAsync from '../../../../utils/catchAsync';
 
 const postService = new PostService();
 
