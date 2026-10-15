@@ -4,10 +4,10 @@ import morgan from 'morgan';
 
 import { postRouter } from '@/modules/post';
 
+import { mediaRouter } from '@/modules/media';
+
 import globalErrorHandler from './controllers/errorController';
 import AppError from './utils/appError';
-
-import mediaRouter from './routes/mediaRoutes';
 
 const app = express();
 

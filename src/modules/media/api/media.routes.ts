@@ -1,7 +1,7 @@
 import express from 'express';
 
-import * as mediaController from '../controllers/mediaController';
-import uploadMedia from '../middleware/mediaUploadMiddleware';
+import * as mediaController from './media.controller';
+import uploadMedia from '../../../../middleware/mediaUploadMiddleware';
 
 const router = express.Router();
 
