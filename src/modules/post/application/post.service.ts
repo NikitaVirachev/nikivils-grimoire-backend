@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import type { CreatePostRequest, UpdatePostRequest } from '@nikivils/grimoire-contracts';
 
 import { commentModel as Comment } from '@/modules/comment';
-import { mediaModel as Media } from '@/modules/media';
+import { AssertMediaExist } from './ports/mediaExistence.port';
 import Post from '../infrastructure/post.model';
 
 import AppError from '../../../../utils/appError';
@@ -35,28 +35,6 @@ const collectMediaIds = (cover: unknown, content: unknown): string[] => {
   return [...ids];
 };
 
-const assertMediaExist = async (ids: string[]): Promise<void> => {
-  if (ids.length === 0) {
-    return;
-  }
-
-  const invalidId = ids.find((id) => !Types.ObjectId.isValid(id));
-
-  if (invalidId) {
-    throw new AppError(`Invalid media ID: ${invalidId}`, 400);
-  }
-
-  const existingMediaCount = await Media.countDocuments({
-    _id: {
-      $in: ids,
-    },
-  });
-
-  if (existingMediaCount !== ids.length) {
-    throw new AppError('One or more media files do not exist', 404);
-  }
-};
-
 export const isMediaUsed = async (mediaId: string): Promise<boolean> => {
   const post = await Post.exists({
     $or: [{ 'cover.imageId': mediaId }, { 'content.blocks.imageId': mediaId }],
@@ -66,10 +44,16 @@ export const isMediaUsed = async (mediaId: string): Promise<boolean> => {
 };
 
 class PostService {
+  private readonly assertMediaExist: AssertMediaExist;
+
+  constructor(assertMediaExist: AssertMediaExist) {
+    this.assertMediaExist = assertMediaExist;
+  }
+
   async create(input: CreatePostRequest) {
     const mediaIds = collectMediaIds(input.cover, input.content);
 
-    await assertMediaExist(mediaIds);
+    await this.assertMediaExist(mediaIds);
 
     const post = new Post({
       title: input.title,
@@ -155,7 +139,7 @@ class PostService {
 
     const mediaIds = collectMediaIds(post.cover, post.content);
 
-    await assertMediaExist(mediaIds);
+    await this.assertMediaExist(mediaIds);
 
     if (!wasPublished && post.status === 'published' && !post.publishedAt) {
       post.publishedAt = new Date();

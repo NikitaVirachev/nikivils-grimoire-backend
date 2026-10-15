@@ -1,9 +1,10 @@
 import mongoose from 'mongoose';
 
-import { GridfsMediaStorage, MediaService } from '@/modules/media';
-import { isMediaUsed } from '@/modules/post';
+import { GridfsMediaStorage, MediaService, assertMediaExist } from '@/modules/media';
+import PostService, { isMediaUsed } from '@/modules/post';
 
 let mediaService: MediaService;
+let postService: PostService;
 
 export function initializeServices() {
   const { db } = mongoose.connection;
@@ -15,6 +16,8 @@ export function initializeServices() {
   const mediaStorage = new GridfsMediaStorage(db);
 
   mediaService = new MediaService(mediaStorage, isMediaUsed);
+
+  postService = new PostService(assertMediaExist);
 }
 
 export function getMediaService() {
@@ -23,4 +26,12 @@ export function getMediaService() {
   }
 
   return mediaService;
+}
+
+export function getPostService() {
+  if (!mediaService) {
+    throw new Error('PostService has not been initialized');
+  }
+
+  return postService;
 }
