@@ -2,8 +2,8 @@ import mongoose from 'mongoose';
 import type { CreatePostRequest, UpdatePostRequest } from '@nikivils/grimoire-contracts';
 
 import { commentModel as Comment } from '@/modules/comment';
+import { mediaModel as Media } from '@/modules/media';
 import Post from '../infrastructure/post.model';
-import Media from '../../../../models/mediaModel';
 
 import AppError from '../../../../utils/appError';
 

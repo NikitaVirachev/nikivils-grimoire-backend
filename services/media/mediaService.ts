@@ -2,7 +2,7 @@ import { Readable } from 'node:stream';
 import { Types } from 'mongoose';
 
 import { PostModel } from '@/modules/post';
-import Media from '../../models/mediaModel';
+import { mediaModel as Media } from '@/modules/media';
 import type { MediaStorageService } from './mediaStorageService';
 import validateImageasync from './validateImage';
 
