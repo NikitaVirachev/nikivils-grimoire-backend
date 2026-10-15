@@ -1,10 +1,12 @@
 import path from 'path';
 import express from 'express';
 import morgan from 'morgan';
+
+import { postRouter } from '@/modules/post';
+
 import globalErrorHandler from './controllers/errorController';
 import AppError from './utils/appError';
 
-import postRouter from './routes/postRoutes';
 import mediaRouter from './routes/mediaRoutes';
 
 const app = express();

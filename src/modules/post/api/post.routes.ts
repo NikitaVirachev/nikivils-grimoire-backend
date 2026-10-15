@@ -1,9 +1,9 @@
 import express from 'express';
 import { createPostSchema, updatePostSchema } from '@nikivils/grimoire-contracts';
 
-import * as postController from '../controllers/postController';
-import validateBody from '../middleware/validateBody';
-import commentRouter from './commentRoutes';
+import * as postController from '../../../../controllers/postController';
+import validateBody from '../../../../middleware/validateBody';
+import commentRouter from '../../../../routes/commentRoutes';
 
 const router = express.Router();
 
