@@ -35,11 +35,13 @@ const mediaSchema = new Schema(
 
     width: {
       type: Number,
+      required: true,
       min: 1,
     },
 
     height: {
       type: Number,
+      required: true,
       min: 1,
     },
   },
