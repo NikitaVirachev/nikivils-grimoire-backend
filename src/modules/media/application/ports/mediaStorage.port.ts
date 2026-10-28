@@ -1,6 +1,6 @@
 import type { Readable } from 'node:stream';
 
-export type MediaStorageType = 'gridfs' | 's3' | 'r2';
+import type { MediaStorageType } from '../../domain/media.types';
 
 export interface UploadFileInput {
   filename: string;
