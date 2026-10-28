@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from 'express';
 
 import type { ZodType } from 'zod';
 
-import AppError from '../utils/appError';
+import AppError from '../../../utils/appError';
 
 const validateBody = (schema: ZodType) => (req: Request, _res: Response, next: NextFunction) => {
   const result = schema.safeParse(req.body);
