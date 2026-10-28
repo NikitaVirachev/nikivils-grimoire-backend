@@ -1,7 +1,6 @@
 import { Readable } from 'node:stream';
-import { Types } from 'mongoose';
 
-import { mediaModel as Media } from '@/modules/media';
+import type { MediaRepository } from './ports/mediaRepository.port';
 import type { MediaStorage } from './ports/mediaStorage.port';
 import type { IsMediaUsed } from './ports/mediaUsage.port';
 import validateImageasync from '../infrastructure/image/validateImage';
@@ -36,11 +35,14 @@ export const assertMediaExist = async (ids: string[]): Promise<void> => {
 };
 
 export class MediaService {
+  private readonly repository: MediaRepository;
+
   private readonly storage: MediaStorage;
 
   private readonly isMediaUsed: IsMediaUsed;
 
-  constructor(storage: MediaStorage, isMediaUsed: IsMediaUsed) {
+  constructor(repository: MediaRepository, storage: MediaStorage, isMediaUsed: IsMediaUsed) {
+    this.repository = repository;
     this.storage = storage;
     this.isMediaUsed = isMediaUsed;
   }
@@ -63,7 +65,7 @@ export class MediaService {
     });
 
     try {
-      const media = await Media.create({
+      const media = await this.repository.create({
         storage: this.storage.type,
 
         storageKey: storedFile.storageKey,
@@ -96,11 +98,7 @@ export class MediaService {
   }
 
   async get(mediaId: string) {
-    if (!Types.ObjectId.isValid(mediaId)) {
-      throw new AppError('Invalid media ID', 400);
-    }
-
-    return Media.findById(mediaId);
+    return this.repository.findById(mediaId);
   }
 
   async getFile(mediaId: string) {
@@ -123,11 +121,7 @@ export class MediaService {
   }
 
   async delete(mediaId: string): Promise<void> {
-    if (!Types.ObjectId.isValid(mediaId)) {
-      throw new AppError('Invalid media ID', 400);
-    }
-
-    const media = await Media.findById(mediaId);
+    const media = await this.repository.findById(mediaId);
 
     if (!media) {
       throw new AppError('Media not found', 404);
@@ -145,6 +139,6 @@ export class MediaService {
 
     await this.storage.delete(media.storageKey);
 
-    await media.deleteOne();
+    await this.repository.deleteById(media.id);
   }
 }

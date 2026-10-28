@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-import { GridfsMediaStorage, MediaService, assertMediaExist } from '@/modules/media';
+import { GridfsMediaStorage, MediaService, MongooseMediaRepository } from '@/modules/media';
 import PostService, { isMediaUsed } from '@/modules/post';
 
 let mediaService: MediaService;
@@ -13,9 +13,10 @@ export function initializeServices() {
     throw new Error('MongoDB is not connected');
   }
 
+  const MediaRepository = new MongooseMediaRepository();
   const mediaStorage = new GridfsMediaStorage(db);
 
-  mediaService = new MediaService(mediaStorage, isMediaUsed);
+  mediaService = new MediaService(MediaRepository, mediaStorage, isMediaUsed);
 
   postService = new PostService(assertMediaExist);
 }
