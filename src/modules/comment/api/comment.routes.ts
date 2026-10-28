@@ -3,7 +3,7 @@ import { createCommentSchema } from '@nikivils/grimoire-contracts';
 
 import { validateBody } from '@/shared/middleware';
 
-import * as commentController from './commentController';
+import * as commentController from './comment.controller';
 
 const router = express.Router({
   mergeParams: true,
