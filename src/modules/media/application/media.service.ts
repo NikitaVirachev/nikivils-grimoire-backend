@@ -12,28 +12,6 @@ export interface CreateMediaInput {
   buffer: Buffer;
 }
 
-export const assertMediaExist = async (ids: string[]): Promise<void> => {
-  if (ids.length === 0) {
-    return;
-  }
-
-  const invalidId = ids.find((id) => !Types.ObjectId.isValid(id));
-
-  if (invalidId) {
-    throw new AppError(`Invalid media ID: ${invalidId}`, 400);
-  }
-
-  const existingMediaCount = await Media.countDocuments({
-    _id: {
-      $in: ids,
-    },
-  });
-
-  if (existingMediaCount !== ids.length) {
-    throw new AppError('One or more media files do not exist', 404);
-  }
-};
-
 export class MediaService {
   private readonly repository: MediaRepository;
 
@@ -140,5 +118,19 @@ export class MediaService {
     await this.storage.delete(media.storageKey);
 
     await this.repository.deleteById(media.id);
+  }
+
+  async assertExist(ids: string[]): Promise<void> {
+    const uniqueIds = [...new Set(ids)];
+
+    if (uniqueIds.length === 0) {
+      return;
+    }
+
+    const count = await this.repository.countByIds(uniqueIds);
+
+    if (count !== uniqueIds.length) {
+      throw new AppError('One or more media files do not exist', 404);
+    }
   }
 }

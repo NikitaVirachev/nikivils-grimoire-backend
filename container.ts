@@ -18,7 +18,7 @@ export function initializeServices() {
 
   mediaService = new MediaService(MediaRepository, mediaStorage, isMediaUsed);
 
-  postService = new PostService(assertMediaExist);
+  postService = new PostService((ids) => mediaService.assertExist(ids));
 }
 
 export function getMediaService() {
