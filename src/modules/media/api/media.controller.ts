@@ -28,7 +28,7 @@ export const createMedia = catchAsync(async (req: Request, res: Response, next: 
 
     data: {
       media: {
-        id: media._id,
+        id: media.id,
 
         filename: media.filename,
 
