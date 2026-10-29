@@ -2,9 +2,7 @@ import path from 'path';
 import express from 'express';
 import morgan from 'morgan';
 
-import { postRouter } from '@/modules/post';
-
-import { mediaRouter } from '@/modules/media';
+import apiRouter from './routes';
 
 import globalErrorHandler from '../../controllers/errorController';
 import AppError from '../../utils/appError';
@@ -29,8 +27,7 @@ app.get('/', (req, res) => {
 });
 
 // 3) ROUTES
-app.use('/api/v1/posts', postRouter);
-app.use('/api/v1/media', mediaRouter);
+app.use('/api/v1', apiRouter);
 
 app.use((req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

@@ -2,12 +2,9 @@ import express from 'express';
 import { createPostSchema, updatePostSchema } from '@nikivils/grimoire-contracts';
 
 import { validateBody } from '@/shared/middleware';
-import { commentRouter } from '@/modules/comment';
 import * as postController from './post.controller';
 
 const router = express.Router();
-
-router.use('/:postId/comments', commentRouter);
 
 router
   .route('/')
