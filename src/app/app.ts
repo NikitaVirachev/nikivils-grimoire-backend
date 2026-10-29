@@ -6,8 +6,8 @@ import { postRouter } from '@/modules/post';
 
 import { mediaRouter } from '@/modules/media';
 
-import globalErrorHandler from './controllers/errorController';
-import AppError from './utils/appError';
+import globalErrorHandler from '../../controllers/errorController';
+import AppError from '../../utils/appError';
 
 const app = express();
 
