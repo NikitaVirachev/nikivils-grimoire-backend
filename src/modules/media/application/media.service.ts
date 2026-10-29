@@ -3,7 +3,7 @@ import { Readable } from 'node:stream';
 import type { MediaRepository } from './ports/mediaRepository.port';
 import type { MediaStorage } from './ports/mediaStorage.port';
 import type { IsMediaUsed } from './ports/mediaUsage.port';
-import validateImageasync from '../infrastructure/image/validateImage';
+import validateImage from '../infrastructure/image/validateImage';
 
 import AppError from '../../../../utils/appError';
 
@@ -26,7 +26,7 @@ export class MediaService {
   }
 
   async create(input: CreateMediaInput) {
-    const validated = await validateImageasync(input.buffer);
+    const validated = await validateImage(input.buffer);
 
     const storedFile = await this.storage.upload({
       filename: input.filename,

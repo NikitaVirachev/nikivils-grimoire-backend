@@ -18,7 +18,7 @@ export interface ValidatedImage {
   height: number;
 }
 
-const validateImageasync = async (buffer: Buffer): Promise<ValidatedImage> => {
+const validateImage = async (buffer: Buffer): Promise<ValidatedImage> => {
   const { fileTypeFromBuffer } = await import('file-type');
 
   const detectedType = await fileTypeFromBuffer(buffer);
@@ -81,4 +81,4 @@ const validateImageasync = async (buffer: Buffer): Promise<ValidatedImage> => {
   };
 };
 
-export default validateImageasync;
+export default validateImage;
