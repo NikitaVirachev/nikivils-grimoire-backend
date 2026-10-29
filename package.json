@@ -2,12 +2,12 @@
   "name": "nikivils-grimoire-backend",
   "version": "1.0.0",
   "description": "A backend part of my personal website.",
-  "main": "server.ts",
+  "main": "src/app/server.ts",
   "scripts": {
-    "start:dev": "nodemon --exec \"node -r ts-node/register -r tsconfig-paths/register\" server.ts",
-    "start:prod": "cross-env NODE_ENV=production node -r ts-node/register -r tsconfig-paths/register server.ts",
-    "debug:dev": "ndb -r ts-node/register/transpile-only server.ts",
-    "debug:prod": "cross-env NODE_ENV=production ndb -r ts-node/register/transpile-only server.ts"
+    "start:dev": "nodemon --exec \"node -r ts-node/register -r tsconfig-paths/register\" src/app/server.ts",
+    "start:prod": "cross-env NODE_ENV=production node -r ts-node/register -r tsconfig-paths/register src/app/server.ts",
+    "debug:dev": "ndb -r ts-node/register/transpile-only src/app/server.ts",
+    "debug:prod": "cross-env NODE_ENV=production ndb -r ts-node/register/transpile-only src/app/server.ts"
   },
   "repository": {
     "type": "git",
