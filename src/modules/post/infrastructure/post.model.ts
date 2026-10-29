@@ -39,7 +39,7 @@ const headingBlockSchema = new Schema(
   {
     text: {
       type: String,
-      requied: true,
+      required: true,
       default: '',
     },
 
