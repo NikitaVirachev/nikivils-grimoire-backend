@@ -2,9 +2,9 @@ import mongoose from 'mongoose';
 
 import './loadEnv';
 
-import app from './app';
+import { initializeServices } from '@/app';
 
-import { initializeServices } from './container';
+import app from './app';
 
 process.on('uncaughtException', (err: Error) => {
   console.log('UNCAUGHT EXCEPTION! 🔥 Shutting down...');
