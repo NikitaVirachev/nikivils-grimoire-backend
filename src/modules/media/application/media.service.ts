@@ -75,8 +75,13 @@ export class MediaService {
       // Компенсируем операцию.
       try {
         await this.storage.delete(storedFile.storageKey);
-      } catch {
-        // logger.error(...)
+      } catch (cleanupError) {
+        console.error('Failed to cleanup uploaded media', {
+          storageKey: storedFile.storageKey,
+          storage: this.storage.type,
+          originalError: error,
+          cleanupError,
+        });
       }
 
       throw error;
