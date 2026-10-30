@@ -13,10 +13,10 @@ export function initializeServices() {
     throw new Error('MongoDB is not connected');
   }
 
-  const MediaRepository = new MongooseMediaRepository();
+  const mediaRepository = new MongooseMediaRepository();
   const mediaStorage = new GridfsMediaStorage(db);
 
-  mediaService = new MediaService(MediaRepository, mediaStorage, isMediaUsed);
+  mediaService = new MediaService(mediaRepository, mediaStorage, isMediaUsed);
 
   postService = new PostService((ids) => mediaService.assertExist(ids));
 }
