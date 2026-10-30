@@ -30,7 +30,7 @@ export function getMediaService() {
 }
 
 export function getPostService() {
-  if (!mediaService) {
+  if (!postService) {
     throw new Error('PostService has not been initialized');
   }
 
