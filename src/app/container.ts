@@ -16,9 +16,12 @@ export function initializeServices() {
   const mediaRepository = new MongooseMediaRepository();
   const mediaStorage = new GridfsMediaStorage(db);
 
-  mediaService = new MediaService(mediaRepository, mediaStorage, isMediaUsed);
+  const media = new MediaService(mediaRepository, mediaStorage, isMediaUsed);
 
-  postService = new PostService((ids) => mediaService.assertExist(ids));
+  const post = new PostService((ids) => media.assertExist(ids));
+
+  mediaService = media;
+  postService = post;
 }
 
 export function getMediaService() {
