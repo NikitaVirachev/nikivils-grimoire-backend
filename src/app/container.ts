@@ -1,6 +1,11 @@
 import mongoose from 'mongoose';
 
-import { GridfsMediaStorage, MediaService, MongooseMediaRepository } from '@/modules/media';
+import {
+  GridfsMediaStorage,
+  MediaService,
+  MongooseMediaRepository,
+  SharpImageInspector,
+} from '@/modules/media';
 import PostService, { isMediaUsed } from '@/modules/post';
 
 let mediaService: MediaService;
@@ -13,10 +18,14 @@ export function initializeServices() {
     throw new Error('MongoDB is not connected');
   }
 
+  const maxInputPixels = Number(process.env.MAX_IMAGE_PIXELS);
+
   const mediaRepository = new MongooseMediaRepository();
   const mediaStorage = new GridfsMediaStorage(db);
 
-  const media = new MediaService(mediaRepository, mediaStorage, isMediaUsed);
+  const imageInspector = new SharpImageInspector(maxInputPixels);
+
+  const media = new MediaService(mediaRepository, mediaStorage, imageInspector, isMediaUsed);
 
   const post = new PostService((ids) => media.assertExist(ids));
 

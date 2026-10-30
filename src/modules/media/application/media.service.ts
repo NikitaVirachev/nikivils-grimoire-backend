@@ -3,7 +3,7 @@ import { Readable } from 'node:stream';
 import type { MediaRepository } from './ports/mediaRepository.port';
 import type { MediaStorage } from './ports/mediaStorage.port';
 import type { IsMediaUsed } from './ports/mediaUsage.port';
-import validateImage from '../infrastructure/image/validateImage';
+import type { ImageInspector } from './ports/imageInspector.port';
 
 import AppError from '../../../../utils/appError';
 
@@ -17,16 +17,24 @@ export class MediaService {
 
   private readonly storage: MediaStorage;
 
+  private readonly inspector: ImageInspector;
+
   private readonly isMediaUsed: IsMediaUsed;
 
-  constructor(repository: MediaRepository, storage: MediaStorage, isMediaUsed: IsMediaUsed) {
+  constructor(
+    repository: MediaRepository,
+    storage: MediaStorage,
+    inspector: ImageInspector,
+    isMediaUsed: IsMediaUsed
+  ) {
     this.repository = repository;
     this.storage = storage;
+    this.inspector = inspector;
     this.isMediaUsed = isMediaUsed;
   }
 
   async create(input: CreateMediaInput) {
-    const validated = await validateImage(input.buffer);
+    const validated = await this.inspector.inspect(input.buffer);
 
     const storedFile = await this.storage.upload({
       filename: input.filename,
