@@ -5,7 +5,7 @@ import morgan from 'morgan';
 import apiRouter from './routes';
 
 import globalErrorHandler from './middleware/errorHandler';
-import AppError from '../../utils/appError';
+import notFoundHandler from './middleware/notFoundHandler';
 import env from './config/env';
 
 const app = express();
@@ -30,10 +30,7 @@ app.get('/', (req, res) => {
 // 3) ROUTES
 app.use('/api/v1', apiRouter);
 
-app.use((req, res, next) => {
-  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
-});
-
+app.use(notFoundHandler);
 app.use(globalErrorHandler);
 
 export default app;
