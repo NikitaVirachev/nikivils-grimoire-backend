@@ -1,6 +1,6 @@
 import express from 'express';
 
-import { validateParams } from '@/shared/middleware';
+import validateParams from '@/shared/middleware/validateParams';
 import * as mediaController from './media.controller';
 import uploadMedia from '../../../../middleware/mediaUploadMiddleware';
 import mediaParamsSchema from './media.validation';

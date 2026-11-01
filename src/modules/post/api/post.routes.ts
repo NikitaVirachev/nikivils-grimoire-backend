@@ -1,7 +1,7 @@
 import express from 'express';
 import { createPostSchema, updatePostSchema } from '@nikivils/grimoire-contracts';
 
-import { validateBody } from '@/shared/middleware';
+import validateBody from '@/shared/middleware/validateBody';
 import * as postController from './post.controller';
 
 const router = express.Router();
