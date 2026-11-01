@@ -2,7 +2,7 @@ import express from 'express';
 
 import validateParams from '@/shared/middleware/validateParams';
 import * as mediaController from './media.controller';
-import uploadMedia from '../../../../middleware/mediaUploadMiddleware';
+import uploadMedia from './mediaUpload.middleware';
 import mediaParamsSchema from './media.validation';
 
 const router = express.Router();

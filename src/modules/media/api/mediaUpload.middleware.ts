@@ -6,7 +6,7 @@ const uploadMedia = multer({
   storage: multer.memoryStorage(),
 
   limits: {
-    fileSize: Number(env.MAX_IMAGE_SIZE),
+    fileSize: env.MAX_IMAGE_SIZE,
     files: 1,
   },
 });
