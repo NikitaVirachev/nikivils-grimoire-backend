@@ -4,7 +4,7 @@ import morgan from 'morgan';
 
 import apiRouter from './routes';
 
-import globalErrorHandler from '../../controllers/errorController';
+import globalErrorHandler from './middleware/errorHandler';
 import AppError from '../../utils/appError';
 import env from './config/env';
 
