@@ -3,10 +3,9 @@ import { CreateCommentRequest } from '@nikivils/grimoire-contracts';
 
 import { PostModel } from '@/modules/post';
 import AppError from '@/shared/errors/appError';
+import { generateAnonymousName } from '@/shared/utils/generateAnonymousName';
 
 import Comment from '../infrastructure/commentModel';
-
-import { generateAnonymousName } from '../../../../utils/generateAnonymousName';
 
 class CommentService {
   private async assertPostExists(postId: string): Promise<Types.ObjectId> {
