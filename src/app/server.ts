@@ -1,8 +1,8 @@
-import mongoose from 'mongoose';
-
 import '../../loadEnv';
 
 import { initializeServices } from '@/app/index';
+import { connectDatabase, disconnectDatabase } from './config/database';
+import env from './config/env';
 
 import app from './app';
 
@@ -17,16 +17,29 @@ const port = process.env.PORT || 3000;
 
 let server: ReturnType<typeof app.listen>;
 
-async function start() {
-  await mongoose.connect('mongodb://127.0.0.1:27017/nikivils-grimoire');
+const shutdown = async () => {
+  server.close(async () => {
+    try {
+      await disconnectDatabase();
+      process.exit(0);
+    } catch (error) {
+      console.error('Shutdown failed:', error);
+      process.exit(1);
+    }
+  });
+};
 
-  console.log('DB connection successful!');
+async function start() {
+  await connectDatabase(env.DATABASE_URL);
 
   initializeServices();
 
   server = app.listen(port, () => {
     console.log(`App running on port ${port}...`);
   });
+
+  process.once('SIGINT', shutdown);
+  process.once('SIGTERM', shutdown);
 }
 
 start().catch((err: Error) => {
@@ -41,9 +54,7 @@ process.on('unhandledRejection', (err: Error) => {
   console.log(err.name, err.message);
 
   if (server) {
-    server.close(() => {
-      process.exit(1);
-    });
+    shutdown();
   } else {
     process.exit(1);
   }
