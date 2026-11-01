@@ -1,6 +1,6 @@
 import { getPostService } from '@/app/container';
 
-import catchAsync from '../../../../utils/catchAsync';
+import catchAsync from '@/shared/middleware/catchAsync';
 
 export const getAllPosts = catchAsync(async (req, res, next) => {
   const postService = getPostService();

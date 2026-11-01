@@ -3,7 +3,7 @@ import type { Request, Response, NextFunction } from 'express';
 import { pipeline } from 'node:stream/promises';
 
 import { getMediaService } from '@/app/container';
-import catchAsync from '../../../../utils/catchAsync';
+import catchAsync from '@/shared/middleware/catchAsync';
 
 export const createMedia = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   if (!req.file) {
