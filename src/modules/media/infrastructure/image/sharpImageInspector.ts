@@ -1,10 +1,9 @@
 import sharp from 'sharp';
 
 import env from '@/app/config/env';
+import AppError from '@/shared/errors/appError';
 
 import { ImageInfo, ImageInspector } from '../../application/ports/imageInspector.port';
-
-import AppError from '../../../../../utils/appError';
 
 const ALLOWED_IMAGE_TYPES = new Set([
   'image/jpeg',

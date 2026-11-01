@@ -2,9 +2,10 @@ import { Types } from 'mongoose';
 import { CreateCommentRequest } from '@nikivils/grimoire-contracts';
 
 import { PostModel } from '@/modules/post';
+import AppError from '@/shared/errors/appError';
+
 import Comment from '../infrastructure/commentModel';
 
-import AppError from '../../../../utils/appError';
 import { generateAnonymousName } from '../../../../utils/generateAnonymousName';
 
 class CommentService {

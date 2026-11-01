@@ -1,11 +1,11 @@
 import mongoose from 'mongoose';
 import type { CreatePostRequest, UpdatePostRequest } from '@nikivils/grimoire-contracts';
 
+import AppError from '@/shared/errors/appError';
 import { commentModel as Comment } from '@/modules/comment';
+
 import { AssertMediaExist } from './ports/mediaExistence.port';
 import Post from '../infrastructure/post.model';
-
-import AppError from '../../../../utils/appError';
 
 const { Types } = mongoose;
 

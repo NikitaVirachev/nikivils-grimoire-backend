@@ -1,11 +1,11 @@
 import { Readable } from 'node:stream';
 
+import AppError from '@/shared/errors/appError';
+
 import type { MediaRepository } from './ports/mediaRepository.port';
 import type { MediaStorage } from './ports/mediaStorage.port';
 import type { IsMediaUsed } from './ports/mediaUsage.port';
 import type { ImageInspector } from './ports/imageInspector.port';
-
-import AppError from '../../../../utils/appError';
 
 export interface CreateMediaInput {
   filename: string;

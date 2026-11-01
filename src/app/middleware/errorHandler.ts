@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from 'express';
 
 import env from '@/app/config/env';
 
-import AppError from '../../../utils/appError';
+import AppError from '@/shared/errors/appError';
 
 const normalizeError = (err: unknown): AppError => {
   if (err instanceof AppError) {
