@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from 'express';
 
 import { pipeline } from 'node:stream/promises';
 
-import { getMediaService } from '@/app';
+import { getMediaService } from '@/app/container';
 import catchAsync from '../../../../utils/catchAsync';
 
 export const createMedia = catchAsync(async (req: Request, res: Response, next: NextFunction) => {

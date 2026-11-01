@@ -1,4 +1,4 @@
-import { initializeServices } from '@/app/index';
+import { initializeServices } from '@/app/container';
 import { connectDatabase, disconnectDatabase } from './config/database';
 import env from './config/env';
 
