@@ -18,8 +18,6 @@ const port = process.env.PORT || 3000;
 let server: ReturnType<typeof app.listen>;
 
 async function start() {
-  mongoose.set('transactionAsyncLocalStorage', true);
-
   await mongoose.connect('mongodb://127.0.0.1:27017/nikivils-grimoire');
 
   console.log('DB connection successful!');
