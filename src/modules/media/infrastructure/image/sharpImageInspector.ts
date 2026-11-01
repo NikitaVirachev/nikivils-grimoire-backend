@@ -1,5 +1,7 @@
 import sharp from 'sharp';
 
+import env from '@/app/config/env';
+
 import { ImageInfo, ImageInspector } from '../../application/ports/imageInspector.port';
 
 import AppError from '../../../../../utils/appError';
@@ -39,7 +41,7 @@ export class SharpImageInspector implements ImageInspector {
         /*
          * Do not allow the image size to increase after unpacking.
          */
-        limitInputPixels: Number(process.env.MAX_IMAGE_PIXELS),
+        limitInputPixels: Number(env.MAX_IMAGE_PIXELS),
 
         /*
          * We retain strict warning handling for untrusted files.

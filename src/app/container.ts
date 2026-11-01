@@ -7,6 +7,7 @@ import {
   SharpImageInspector,
 } from '@/modules/media';
 import PostService, { isMediaUsed } from '@/modules/post';
+import env from './config/env';
 
 let mediaService: MediaService;
 let postService: PostService;
@@ -18,7 +19,7 @@ export function initializeServices() {
     throw new Error('MongoDB is not connected');
   }
 
-  const maxInputPixels = Number(process.env.MAX_IMAGE_PIXELS);
+  const maxInputPixels = Number(env.MAX_IMAGE_PIXELS);
 
   const mediaRepository = new MongooseMediaRepository();
   const mediaStorage = new GridfsMediaStorage(db);

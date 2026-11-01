@@ -1,6 +1,8 @@
 import multer from 'multer';
 import { Request, Response, NextFunction } from 'express';
 
+import env from '@/app/config/env';
+
 import AppError from '../utils/appError';
 
 const normalizeError = (err: unknown): AppError => {
@@ -55,9 +57,9 @@ const sendErrorProd = (err: AppError, res: Response) => {
 const globalErrorHandler = (err: unknown, req: Request, res: Response, next: NextFunction) => {
   const error = normalizeError(err);
 
-  if (process.env.NODE_ENV === 'development') {
+  if (env.NODE_ENV === 'development') {
     sendErrorDev(error, res);
-  } else if (process.env.NODE_ENV === 'production') {
+  } else if (env.NODE_ENV === 'production') {
     sendErrorProd(error, res);
   }
 };

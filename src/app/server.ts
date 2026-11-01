@@ -1,5 +1,3 @@
-import '../../loadEnv';
-
 import { initializeServices } from '@/app/index';
 import { connectDatabase, disconnectDatabase } from './config/database';
 import env from './config/env';
@@ -12,8 +10,6 @@ process.on('uncaughtException', (err: Error) => {
 
   process.exit(1);
 });
-
-const port = process.env.PORT || 3000;
 
 let server: ReturnType<typeof app.listen>;
 
@@ -34,8 +30,8 @@ async function start() {
 
   initializeServices();
 
-  server = app.listen(port, () => {
-    console.log(`App running on port ${port}...`);
+  server = app.listen(env.PORT, () => {
+    console.log(`App running on port ${env.PORT}...`);
   });
 
   process.once('SIGINT', shutdown);

@@ -6,6 +6,7 @@ import apiRouter from './routes';
 
 import globalErrorHandler from '../../controllers/errorController';
 import AppError from '../../utils/appError';
+import env from './config/env';
 
 const app = express();
 
@@ -14,10 +15,10 @@ const app = express();
 app.use(express.json());
 
 // 2) Static files
-const frontendDir: string = process.env.FRONTEND_DIR || path.join(__dirname, 'public');
+const frontendDir: string = env.FRONTEND_DIR || path.join(__dirname, 'public');
 app.use(express.static(frontendDir));
 
-if (process.env.NODE_ENV === 'development') {
+if (env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
