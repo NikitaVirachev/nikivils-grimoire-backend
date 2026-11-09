@@ -1,91 +1,46 @@
-import mongoose from 'mongoose';
 import type { CreatePostRequest, UpdatePostRequest } from '@nikivils/grimoire-contracts';
 
 import AppError from '@/shared/errors/appError';
-import { commentModel as Comment } from '@/modules/comment';
 
-import { AssertMediaExist } from './ports/mediaExistence.port';
-import Post from '../infrastructure/post.model';
+import type { PostRepository } from './ports/postRepository.port';
+import type { AssertMediaExist } from './ports/mediaExistence.port';
+import type { Post, UpdatePostData } from '../domain/post.types';
 
-const { Types } = mongoose;
-
-const hasImageId = (value: unknown): value is { imageId: unknown } =>
-  typeof value === 'object' && value !== null && 'imageId' in value && value.imageId != null;
-
-const collectMediaIds = (cover: unknown, content: unknown): string[] => {
-  const ids = new Set<string>();
-
-  if (hasImageId(cover)) {
-    ids.add(String(cover.imageId));
-  }
-
-  if (
-    typeof content === 'object' &&
-    content !== null &&
-    'blocks' in content &&
-    Array.isArray(content.blocks)
-  ) {
-    content.blocks.forEach((block) => {
-      if (hasImageId(block)) {
-        ids.add(String(block.imageId));
-      }
-    });
-  }
-
-  return [...ids];
-};
-
-export const isMediaUsed = async (mediaId: string): Promise<boolean> => {
-  const post = await Post.exists({
-    $or: [{ 'cover.imageId': mediaId }, { 'content.blocks.imageId': mediaId }],
-  });
-
-  return post !== null;
-};
+import collectMediaIds from './collectMediaIds';
 
 class PostService {
+  private readonly repository: PostRepository;
+
   private readonly assertMediaExist: AssertMediaExist;
 
-  constructor(assertMediaExist: AssertMediaExist) {
+  constructor(repository: PostRepository, assertMediaExist: AssertMediaExist) {
+    this.repository = repository;
     this.assertMediaExist = assertMediaExist;
   }
 
-  async create(input: CreatePostRequest) {
+  async create(input: CreatePostRequest): Promise<Post> {
     const mediaIds = collectMediaIds(input.cover, input.content);
 
     await this.assertMediaExist(mediaIds);
 
-    const post = new Post({
+    const status = input.status ?? 'draft';
+
+    return this.repository.create({
       title: input.title,
       overview: input.overview,
-
-      cover: input.cover ?? undefined,
-
+      cover: input.cover ?? null,
       content: input.content ?? {
         version: 1,
         blocks: [],
       },
-
       tags: input.tags ?? [],
-
-      status: input.status ?? 'draft',
+      status,
+      publishedAt: status === 'published' ? new Date() : null,
     });
-
-    if (post.status === 'published' && !post.publishedAt) {
-      post.publishedAt = new Date();
-    }
-
-    await post.save();
-
-    return post;
   }
 
-  async getById(id: string) {
-    if (!Types.ObjectId.isValid(id)) {
-      throw new AppError('Invalid post ID', 400);
-    }
-
-    const post = await Post.findById(id);
+  async getById(id: string): Promise<Post> {
+    const post = await this.repository.findById(id);
 
     if (!post) {
       throw new AppError('Post not found', 404);
@@ -94,70 +49,70 @@ class PostService {
     return post;
   }
 
-  async getPublished() {
-    return Post.find({
-      status: 'published',
-    })
-      .select('title overview cover tags publishedAt createdAt')
-      .sort({
-        publishedAt: -1,
-      });
+  async getPublished(): Promise<Post[]> {
+    return this.repository.findPublished();
   }
 
-  async update(id: string, input: UpdatePostRequest) {
+  async update(id: string, input: UpdatePostRequest): Promise<Post> {
     const post = await this.getById(id);
 
-    const wasPublished = post.status === 'published';
+    const nextCover = input.cover === undefined ? post.cover : input.cover;
 
-    if (input.title !== undefined) {
-      post.title = input.title;
-    }
+    const nextContent = input.content ?? post.content;
 
-    if (input.overview !== undefined) {
-      post.overview = input.overview;
-    }
-
-    if (input.tags !== undefined) {
-      post.tags = input.tags;
-    }
-
-    if (input.content !== undefined) {
-      post.set('content', input.content);
-    }
-
-    if (input.cover !== undefined) {
-      if (input.cover === null) {
-        post.cover = undefined;
-      } else {
-        post.set('cover', input.cover);
-      }
-    }
-
-    if (input.status !== undefined) {
-      post.status = input.status;
-    }
-
-    const mediaIds = collectMediaIds(post.cover, post.content);
+    const mediaIds = collectMediaIds(nextCover, nextContent);
 
     await this.assertMediaExist(mediaIds);
 
-    if (!wasPublished && post.status === 'published' && !post.publishedAt) {
-      post.publishedAt = new Date();
+    const changes: UpdatePostData = {};
+
+    if (input.title !== undefined) {
+      changes.title = input.title;
     }
 
-    await post.save();
+    if (input.overview !== undefined) {
+      changes.overview = input.overview;
+    }
 
-    return post;
+    if (input.cover !== undefined) {
+      changes.cover = input.cover;
+    }
+
+    if (input.content !== undefined) {
+      changes.content = input.content;
+    }
+
+    if (input.tags !== undefined) {
+      changes.tags = input.tags;
+    }
+
+    if (input.status !== undefined) {
+      changes.status = input.status;
+    }
+
+    const nextStatus = input.status ?? post.status;
+
+    if (post.status !== 'published' && nextStatus === 'published' && !post.publishedAt) {
+      changes.publishedAt = new Date();
+    }
+
+    const updated = await this.repository.update(id, changes);
+
+    if (!updated) {
+      throw new AppError('Post not found', 404);
+    }
+
+    return updated;
   }
 
   async delete(id: string): Promise<void> {
-    const post = await this.getById(id);
+    const deleted = await this.repository.deleteById(id);
 
-    await post.deleteOne();
+    if (!deleted) {
+      throw new AppError('Post not found', 404);
+    }
 
-    await Comment.deleteMany({
-      postId: post._id,
-    });
+    // Удаление комментариев подключим отдельной зависимостью.
   }
 }
 
