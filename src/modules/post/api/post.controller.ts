@@ -1,6 +1,7 @@
 import { getPostService } from '@/app/container';
 
 import catchAsync from '@/shared/middleware/catchAsync';
+import { toPostDto, toPostSummaryDto } from './post.mapper';
 
 export const getAllPosts = catchAsync(async (req, res, next) => {
   const postService = getPostService();
@@ -13,7 +14,7 @@ export const getAllPosts = catchAsync(async (req, res, next) => {
     results: posts.length,
 
     data: {
-      posts,
+      posts: posts.map(toPostSummaryDto),
     },
   });
 });
@@ -27,7 +28,7 @@ export const getPost = catchAsync(async (req, res, next) => {
     status: 'success',
 
     data: {
-      post,
+      post: toPostDto(post),
     },
   });
 });
@@ -41,7 +42,7 @@ export const createPost = catchAsync(async (req, res, next) => {
     status: 'success',
 
     data: {
-      newPost,
+      newPost: toPostDto(newPost),
     },
   });
 });
@@ -55,7 +56,7 @@ export const updatePost = catchAsync(async (req, res, next) => {
     status: 'success',
 
     data: {
-      post,
+      post: toPostDto(post),
     },
   });
 });
