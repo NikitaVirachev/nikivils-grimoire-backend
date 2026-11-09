@@ -6,7 +6,7 @@ import {
   MongooseMediaRepository,
   SharpImageInspector,
 } from '@/modules/media';
-import PostService, { isMediaUsed } from '@/modules/post';
+import PostService, { MongoosePostRepository } from '@/modules/post';
 import env from './config/env';
 
 let mediaService: MediaService;
@@ -22,13 +22,16 @@ export function initializeServices() {
   const maxInputPixels = Number(env.MAX_IMAGE_PIXELS);
 
   const mediaRepository = new MongooseMediaRepository();
-  const mediaStorage = new GridfsMediaStorage(db);
+  const postRepository = new MongoosePostRepository();
 
+  const mediaStorage = new GridfsMediaStorage(db);
   const imageInspector = new SharpImageInspector(maxInputPixels);
 
-  const media = new MediaService(mediaRepository, mediaStorage, imageInspector, isMediaUsed);
+  const media = new MediaService(mediaRepository, mediaStorage, imageInspector, (id) =>
+    postRepository.isMediaUsed(id)
+  );
 
-  const post = new PostService((ids) => media.assertExist(ids));
+  const post = new PostService(postRepository, (ids) => media.assertExist(ids));
 
   mediaService = media;
   postService = post;
